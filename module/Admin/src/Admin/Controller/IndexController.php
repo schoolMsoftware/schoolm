@@ -52,7 +52,7 @@ class IndexController extends AbstractActionController {
 
             // Logic for login authentication                
         }
-        return $this->redirect()->toRoute('admin', array(
+        return $this->redirect()->toRoute('index', array(
             'action' => 'login',
         ));
         //return $this->redirect()->tourl('/schoolManage/admin/login');

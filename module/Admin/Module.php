@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -9,44 +10,52 @@
 
 namespace Admin;
 
+use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+use Zend\ModuleManager\Feature\ConfigProviderInterface;
+ use Zend\Db\ResultSet\ResultSet;
+ use Zend\Db\TableGateway\TableGateway;
+ use Admin\Model\UserTable;
+ use Zend\Authentication\Adapter\DbTable as DbAuthAdapter;
+ use Zend\Authentication\AuthenticationService;
 
- use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
- use Zend\ModuleManager\Feature\ConfigProviderInterface;
+class Module implements AutoloaderProviderInterface, ConfigProviderInterface {
 
- class Module implements AutoloaderProviderInterface, ConfigProviderInterface
- {
-     public function getAutoloaderConfig()
-     {
-		//echo __DIR__ . '/autoload_classmap.php';die;
-         return array(
-             'Zend\Loader\StandardAutoloader' => array(
-                 'namespaces' => array(
-                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                 ),
-             ),
-         );
-     }
-
-     public function getConfig()
-     {
-         return include __DIR__ . '/config/module.config.php';
-     }
-
-    public function getServiceConfig()
-    {
+    public function getAutoloaderConfig() {
+        //echo __DIR__ . '/autoload_classmap.php';die;
         return array(
-            'initializers' => array(
-               function ($instance, $sm) {
-               //use this only once for reduce repetitive injection
-                   //in registering class in SM
-                   if ($instance instanceof \Zend\Db\Adapter\AdapterAwareInterface) {
-                   $instance->setDbAdapter($sm->get('Zend\Db\Adapter\Adapter'));
-            }
-                }
-        ),
-            'invokables' => array(
-                'Admin\Model\UserTable' =>  'Admin\Model\UserTable'
+            'Zend\Loader\StandardAutoloader' => array(
+                'namespaces' => array(
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                ),
             ),
         );
     }
- }
+
+    public function getConfig() {
+        return include __DIR__ . '/config/module.config.php';
+    }
+
+    public function getServiceConfig() {
+        return array(
+            'factories' => array(
+                'Admin\Model\UserTable' => function($sm) {
+                    $adapter = $sm->get('AdminDbAdapter');
+                    $userObj = new \Admin\Model\UserTable($adapter);
+                    return $userObj;
+                },
+                'AdminDbAdapter' => function ($sm) {
+                    return $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                },
+                'AuthService' => function ($sm) {
+                    $adapter = $sm->get('AdminDbAdapter');
+                    $dbAuthAdapter = new DbAuthAdapter ( $adapter, 'sh_system_user', 'email_id', 'password' );
+                    	
+                    $auth = new AuthenticationService();
+                    $auth->setAdapter($dbAuthAdapter);
+                    return $auth;
+                },                        
+            ),
+        );
+    }
+
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/wamp/www/schoolManage/vendor/zendframework/zendframework/library/Zend/Mvc/Controller/Plugin/Redirect.php</file>
+            <file>file:/D:/wamp/www/schoolManage/module/Admin/config/module.config.php</file>
+            <file>file:/D:/wamp/www/schoolManage/config/application.config.php</file>
+            <file>file:/D:/wamp/www/schoolManage/module/Admin/src/Admin/Controller/IndexController.php</file>
+            <file>file:/D:/wamp/www/schoolManage/module/Admin/Module.php</file>
+            <file>file:/D:/wamp/www/schoolManage/vendor/zendframework/zendframework/library/Zend/Session/AbstractContainer.php</file>
+            <file>file:/D:/wamp/www/schoolManage/config/autoload/global.php</file>
+        </group>
+    </open-files>
+</project-private>

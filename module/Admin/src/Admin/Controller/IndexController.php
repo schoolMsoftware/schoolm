@@ -26,38 +26,24 @@ class IndexController extends AbstractActionController {
     }
 
     public function indexAction() {
-
         $request = $this->getRequest();
-
         $view = new ViewModel();
-
         if ($request->isPost()) {
             $data = $request->getPost();
             $encyptPass = md5($data['password']);
-            $this->getAuthService()
-                    ->getAdapter()
-                    ->setIdentity($data['username'])
-                    ->setCredential($encyptPass);
-            $result = $this->getAuthService()->authenticate();
+            $this->authservice = $this->getAuthService();
+            $this->authservice->getAdapter()->setIdentity($data['username'])->setCredential($encyptPass);
+            $result = $this->authservice->authenticate();
             if ($result->isValid()) {
-                $this->session->offsetSet('email', $data['email']);
+                $this->session->offsetSet('email', $data['username']);
+                $userDetail = $this->authservice->getAdapter()->getResultRowObject();
                 $this->flashMessenger()->addMessage(array('success' => 'Login Success.'));
-                return $this->redirect()->toRoute('dashboard', array(
-                    'action' => 'add',
-                ));
+                return $this->redirect()->toUrl($GLOBALS['SITE_ADMIN_URL'].'dashboard/add');
             } else {
                 $this->flashMessenger()->addMessage(array('error' => 'invalid credentials.'));
-                // Rirect to page after login failureedirect to page after login failure
-            }
-
-            // Logic for login authentication                
+            }              
         }
-        return $this->redirect()->toRoute('index', array(
-            'action' => 'login',
-        ));
-        //return $this->redirect()->tourl('/schoolManage/admin/login');
-        //$view->setVariable('loginForm', $loginForm);
-        //return $view;
+        return $this->redirect()->toUrl($GLOBALS['SITE_ADMIN_URL'].'index/login');
     }
     public function loginAction() {
         return new ViewModel();
@@ -68,5 +54,4 @@ class IndexController extends AbstractActionController {
         }
         return $this->authservice;
     }
-
 }

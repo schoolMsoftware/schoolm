@@ -25,5 +25,7 @@ class DashboardController extends AbstractActionController {
         echo "fsdf";
         die;
     } 
-
+    public function indexAction() {
+        die('ddd');
+    }
 }

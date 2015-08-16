@@ -18,26 +18,22 @@ use Admin\Model\UserTable;
 class IndexController extends AbstractActionController {
 
     var $userObj;
-    protected $storage;
     protected $authservice;
 
     public function __construct() {
         $this->session = new Container('User');
+        $this->userObj = new \Admin\Model\UserTable();
     }
 
     public function indexAction() {
         $request = $this->getRequest();
         $view = new ViewModel();
         if ($request->isPost()) {
-            $data = $request->getPost();
-            $encyptPass = md5($data['password']);
-            $this->authservice = $this->getAuthService();
-            $this->authservice->getAdapter()->setIdentity($data['username'])->setCredential($encyptPass);
-            $result = $this->authservice->authenticate();
-            if ($result->isValid()) {
-                $this->session->offsetSet('email', $data['username']);
-                $userDetail = $this->authservice->getAdapter()->getResultRowObject();
-                $this->flashMessenger()->addMessage(array('success' => 'Login Success.'));
+            $data['param'] = $request->getPost();
+            $data['param']['password'] = md5($data['param']['password']);
+            $response = json_decode($this->userObj->webService($data));
+            if ($response->status == 'success') {
+                $this->session->offsetSet('user', $response);
                 return $this->redirect()->toUrl($GLOBALS['SITE_ADMIN_URL'].'dashboard/add');
             } else {
                 $this->flashMessenger()->addMessage(array('error' => 'invalid credentials.'));
@@ -47,11 +43,5 @@ class IndexController extends AbstractActionController {
     }
     public function loginAction() {
         return new ViewModel();
-    }
-    private function getAuthService() {
-        if (!$this->authservice) {
-            $this->authservice = $this->getServiceLocator()->get('AuthService');
-        }
-        return $this->authservice;
     }
 }

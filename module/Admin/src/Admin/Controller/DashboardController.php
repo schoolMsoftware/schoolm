@@ -16,16 +16,14 @@ use Zend\Session\Container;
 use Admin\Model\UserTable;
 
 class DashboardController extends AbstractActionController {
-
-    var $userObj;
-    protected $storage;
-    protected $authservice;
-
+    public function __construct() {
+        $this->view =  new ViewModel();    
+    }
+    
     public function addAction() {
-        echo "fsdf";
-        die;
+        return $this->view;
     } 
     public function indexAction() {
-        die('ddd');
+        return $this->view;
     }
 }
